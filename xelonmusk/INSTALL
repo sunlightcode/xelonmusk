@@ -1,0 +1,5 @@
+Building XElonMusk
+
+See doc/build-*.md for instructions on building xelonmuskd,
+the intended-for-services, no-graphical-interface, reference
+implementation of XElonMusk.

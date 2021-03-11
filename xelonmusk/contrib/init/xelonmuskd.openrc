@@ -1,0 +1,86 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/xelonmusk/.xelonmusk" ]; then
+	XELONMUSKD_DEFAULT_DATADIR="/var/lib/xelonmusk/.xelonmusk"
+else
+	XELONMUSKD_DEFAULT_DATADIR="/var/lib/xelonmuskd"
+fi
+
+XELONMUSKD_CONFIGFILE=${XELONMUSKD_CONFIGFILE:-/etc/xelonmusk/xelonmusk.conf}
+XELONMUSKD_PIDDIR=${XELONMUSKD_PIDDIR:-/var/run/xelonmuskd}
+XELONMUSKD_PIDFILE=${XELONMUSKD_PIDFILE:-${XELONMUSKD_PIDDIR}/xelonmuskd.pid}
+XELONMUSKD_DATADIR=${XELONMUSKD_DATADIR:-${XELONMUSKD_DEFAULT_DATADIR}}
+XELONMUSKD_USER=${XELONMUSKD_USER:-xelonmusk}
+XELONMUSKD_GROUP=${XELONMUSKD_GROUP:-xelonmusk}
+XELONMUSKD_BIN=${XELONMUSKD_BIN:-/usr/bin/xelonmuskd}
+
+name="XElonMusk Core Daemon"
+description="XElonMusk crypto-currency p2p network daemon"
+
+command="/usr/bin/xelonmuskd"
+command_args="-pid=\"${XELONMUSKD_PIDFILE}\" \
+		-conf=\"${XELONMUSKD_CONFIGFILE}\" \
+		-datadir=\"${XELONMUSKD_DATADIR}\" \
+		-daemon \
+		${XELONMUSKD_OPTS}"
+
+required_files="${XELONMUSKD_CONFIGFILE}"
+start_stop_daemon_args="-u ${XELONMUSKD_USER} \
+			-N ${XELONMUSKD_NICE:-0} -w 2000"
+pidfile="${XELONMUSKD_PIDFILE}"
+retry=60
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${XELONMUSKD_USER}:${XELONMUSKD_GROUP}" \
+	"${XELONMUSKD_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${XELONMUSKD_USER}:${XELONMUSKD_GROUP}" \
+	"${XELONMUSKD_PIDDIR}"
+
+	checkpath -f \
+	-o ${XELONMUSKD_USER}:${XELONMUSKD_GROUP} \
+	-m 0660 \
+	${XELONMUSKD_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${XELONMUSKD_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run xelonmuskd."
+		eerror "The setting must appear in ${XELONMUSKD_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following"
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is also recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"XElonMusk Alert\"" \
+			"sunlightcloud@icloud.com"
+		eerror ""
+		return 1
+	fi
+}

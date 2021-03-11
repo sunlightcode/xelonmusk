@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=XElonMusk
+Comment=XElonMusk P2P Cryptocurrency
+Comment[fr]=XElonMusk, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=XElonMusk, eşten eşe kriptografik sanal para birimi
+Exec=xelonmusk-qt %u
+Terminal=false
+Type=Application
+Icon=xelonmusk128
+MimeType=x-scheme-handler/xelonmusk;
+Categories=Office;Finance;

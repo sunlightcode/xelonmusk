@@ -1,0 +1,7 @@
+[main]
+host = https://www.transifex.com
+
+[xelonmusk.qt-translation-010x]
+file_filter = src/qt/locale/xelonmusk_<lang>.ts
+source_file = src/qt/locale/xelonmusk_en.ts
+source_lang = en

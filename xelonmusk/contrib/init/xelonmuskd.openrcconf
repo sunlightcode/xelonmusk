@@ -1,0 +1,27 @@
+# /etc/conf.d/xelonmuskd: config file for /etc/init.d/xelonmuskd
+
+# Config file location
+#XELONMUSKD_CONFIGFILE="/etc/xelonmusk/xelonmusk.conf"
+
+# What directory to write pidfile to?  (created and owned by $XELONMUSKD_USER)
+#XELONMUSKD_PIDDIR="/var/run/xelonmuskd"
+
+# What filename to give the pidfile
+#XELONMUSKD_PIDFILE="${XELONMUSKD_PIDDIR}/xelonmuskd.pid"
+
+# Where to write xelonmuskd data (be mindful that the blockchain is large)
+#XELONMUSKD_DATADIR="/var/lib/xelonmuskd"
+
+# User and group to own xelonmuskd process
+#XELONMUSKD_USER="xelonmusk"
+#XELONMUSKD_GROUP="xelonmusk"
+
+# Path to xelonmuskd executable
+#XELONMUSKD_BIN="/usr/bin/xelonmuskd"
+
+# Nice value to run xelonmuskd under
+#XELONMUSKD_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+XELONMUSKD_OPTS="-disablewallet"
+
